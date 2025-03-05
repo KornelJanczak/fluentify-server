@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, VersioningType } from '@nestjs/common';
 import { json, urlencoded } from 'express';
 import * as session from 'express-session';
 import { RedisStore } from 'connect-redis';
@@ -56,6 +56,17 @@ export class AppService {
     });
   }
 
+  private standardMiddleware(app: NestExpressApplication): void {
+    app.use(compression());
+    app.use(json({ limit: '50mb' }));
+    app.use(urlencoded({ extended: true, limit: '50mb' }));
+    app.setGlobalPrefix('api');
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: '1',
+    });
+  }
+
   private createSessionStrore() {
     this.redisService.connect();
     return new RedisStore({
@@ -64,20 +75,10 @@ export class AppService {
     });
   }
 
-  private standardMiddleware(app: NestExpressApplication): void {
-    app.use(compression());
-    app.use(json({ limit: '50mb' }));
-    app.use(urlencoded({ extended: true, limit: '50mb' }));
-  }
-
   // private passportMiddleware(app: NestExpressApplication): void {
   //   app.use(passport.initialize());
   //   app.use(passport.session());
   // }
-
-  private httpLoggerMiddleware(app: NestExpressApplication): void {
-    app.use();
-  }
 
   // private globalErrorHandler(app: NestExpressApplication): void {
   //   app.use(globalErrorMiddleware);
