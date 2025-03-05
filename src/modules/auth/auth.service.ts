@@ -1,53 +1,43 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import passport from 'passport';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { User } from 'src/shared/db/schema';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { type Profile } from 'passport-google-oauth20';
+import { type User } from 'src/shared/db/schema';
 import UserRepository from 'src/shared/repositories/user.repository';
 
 @Injectable()
-export class AuthService extends PassportStrategy(Strategy) {
-  private readonly logger = new Logger(AuthService.name);
+export class AuthService {
+  constructor(private userRepository: UserRepository) {}
 
-  constructor(
-    private configService: ConfigService,
-    private userRepository: UserRepository,
-  ) {
-    super({
-      clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
-      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL'),
-      passReqToCallback: true,
-      scope: [
-        'profile',
-        'email',
-        'openid',
-        'https://www.googleapis.com/auth/cloud-platform',
-      ],
-    });
+  public async validateUser(profile: Profile) {
+    console.log('profile', profile);
 
-    passport.use(this);
+    const { sub, email, picture } = profile._json;
+    const existingUser = await this.userRepository.getByEmail(email);
+    let user: User;
 
-    passport.serializeUser(({ id }: User, done) => {
-      this.logger.log(`User has been serialized ${id}`);
-      done(null, user);
-    });
+    if (existingUser) {
+      user = existingUser;
+    } else {
+      const newUser: User = {
+        id: sub,
+        email: email,
+        imagePath: picture,
+        role: 'user',
+        subscriptionExpiryDate: new Date().getDate().toLocaleString(),
+        studyingLanguageLevel: 'B1',
+        nativeLanguage: 'PL',
+        tutorId: 'en-US-Casual-K',
+      };
 
-    passport.deserializeUser(
-      async (id: string, done: (err: any, user?: User) => void) => {
-        const currentUser = await userRepository.getById(id);
+      user = await this.userRepository.create(newUser);
+    }
 
-        if (!currentUser)
-          throw new HttpException(
-            "User doesn't exist",
-            HttpStatus.UNAUTHORIZED,
-          );
-
-        return done(null, currentUser);
-      },
-    );
+    return user.id;
   }
 
-  public async validate() {}
+  public async getUserById(id: string) {
+    const currentUser = await this.userRepository.getById(id);
+    if (!currentUser)
+      throw new UnauthorizedException('User is not authorized to this action');
+    return currentUser;
+  }
 }
