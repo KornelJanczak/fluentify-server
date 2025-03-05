@@ -1,13 +1,16 @@
 import { eq } from 'drizzle-orm';
 import { type User, users } from '../db/schema';
 import { ServiceException } from 'src/common/service-exception';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as sc from '../db/schema';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { DrizzleAsyncProvider } from '../db/db.provider';
 
 @Injectable()
 class UserRepository {
-  constructor(private db: NodePgDatabase<typeof sc>) {}
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof sc>,
+  ) {}
 
   public async create(newUser: User): Promise<User> {
     try {
