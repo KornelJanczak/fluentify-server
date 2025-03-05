@@ -5,14 +5,17 @@ import {
   HttpStatus,
   Logger,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/shared/db/schema';
 import { Request } from 'express';
+import { GoogleAuthGuard } from './strategies/google.guard';
+
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  @Get('/logout')
+  @Get('logout')
   public logOut(@Req() req: Request) {
     req.logout((error) => {
       if (error) {
@@ -28,7 +31,7 @@ export class AuthController {
     });
   }
 
-  @Get('/session')
+  @Get('session')
   public authSession(@Req() req: Request) {
     const currentUser: User = req.user as User;
 
@@ -41,5 +44,17 @@ export class AuthController {
     this.logger.log(`User is authenticated ${currentUser.id}`);
 
     return currentUser;
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  public handleLogin() {
+    return { msg: 'Google Authentication' };
+  }
+
+  @Get('callback/google')
+  @UseGuards(GoogleAuthGuard)
+  public googleCallback() {
+    return { msg: 'OK' };
   }
 }
