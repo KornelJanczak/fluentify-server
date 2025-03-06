@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { type Profile } from 'passport-google-oauth20';
-import { type User } from 'src/shared/db/schema';
+import { type User } from 'src/shared/db/db.schema';
 import UserRepository from 'src/shared/repositories/user.repository';
 
 @Injectable()
@@ -8,9 +8,8 @@ export class AuthService {
   constructor(private userRepository: UserRepository) {}
 
   public async validateUser(profile: Profile) {
-    console.log('profile', profile);
-
     const { sub, email, picture } = profile._json;
+
     const existingUser = await this.userRepository.getByEmail(email);
     let user: User;
 
@@ -31,13 +30,15 @@ export class AuthService {
       user = await this.userRepository.create(newUser);
     }
 
-    return user.id;
+    return user;
   }
 
   public async getUserById(id: string) {
     const currentUser = await this.userRepository.getById(id);
+
     if (!currentUser)
       throw new UnauthorizedException('User is not authorized to this action');
+
     return currentUser;
   }
 }
