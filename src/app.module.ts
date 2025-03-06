@@ -5,6 +5,8 @@ import configuration from './common/config/configuration';
 import { RedisModule } from './shared/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DbModule } from './shared/db/db.module';
+import { PassportModule } from '@nestjs/passport';
+import { VocabularySetModule } from './modules/vocabulary-set/vocabulary-set.module';
 
 @Module({
   imports: [
@@ -12,9 +14,11 @@ import { DbModule } from './shared/db/db.module';
       load: [configuration],
       isGlobal: true,
     }),
-    RedisModule,
-    AuthModule,
+    PassportModule.register({ session: true }),
     DbModule,
+    AuthModule,
+    VocabularySetModule,
+    RedisModule,
   ],
   providers: [AppService],
 })
