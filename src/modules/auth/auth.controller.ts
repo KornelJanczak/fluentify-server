@@ -6,14 +6,20 @@ import {
   Logger,
   Req,
   UseGuards,
+  Redirect,
 } from '@nestjs/common';
-import { User } from 'src/shared/db/schema';
+import { User } from 'src/common/decorators/user.decorator';
+import { User as UserType } from 'src/shared/db/db.schema';
 import { Request } from 'express';
 import { GoogleAuthGuard } from './strategies/google.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
+  abc = 123;
+
+  constructor(private readonly configService: ConfigService) {}
 
   @Get('logout')
   public logOut(@Req() req: Request) {
@@ -32,18 +38,16 @@ export class AuthController {
   }
 
   @Get('session')
-  public authSession(@Req() req: Request) {
-    const currentUser: User = req.user as User;
-
-    if (!currentUser)
+  public authSession(@User() user: UserType) {
+    if (!user)
       throw new HttpException(
         'User is not authorized to this action',
         HttpStatus.UNAUTHORIZED,
       );
 
-    this.logger.log(`User is authenticated ${currentUser.id}`);
+    this.logger.log(`User is authenticated ${user.id}`);
 
-    return currentUser;
+    return user;
   }
 
   @Get('google')
@@ -54,7 +58,8 @@ export class AuthController {
 
   @Get('callback/google')
   @UseGuards(GoogleAuthGuard)
+  @Redirect(`http://localhost:3000`, 301)
   public googleCallback() {
-    return { msg: 'OK' };
+    return { msg: 'Google callback' };
   }
 }
