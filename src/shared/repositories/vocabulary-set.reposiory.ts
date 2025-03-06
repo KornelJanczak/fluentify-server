@@ -5,18 +5,17 @@ import {
   type FlashCardWithoutIds,
   vocabularySets,
   flashCards,
-} from '../db/schema';
-import * as sc from '../db/schema';
-import { Injectable } from '@nestjs/common';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+} from '../db/db.schema';
+import { Injectable, Inject } from '@nestjs/common';
 import { ServiceException } from 'src/common/service-exception';
 import { and, count, eq, sql } from 'drizzle-orm';
+import { Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
 
 @Injectable()
 export class VocabularySetRepository {
-  constructor(private db: NodePgDatabase<typeof sc>) {}
+  constructor(@Inject(DrizzleAsyncProvider) private db: Drizzle) {}
 
-  public async createNewVocabularySet(
+  public async create(
     newVocabularySet: VocabularySetWithoutId,
     newFlashCards: FlashCardWithoutIds[],
   ): Promise<string> {
@@ -131,12 +130,15 @@ export class VocabularySetRepository {
           })
           .where(eq(vocabularySets.id, id))
           .returning();
-        for (const flashCard of vocabularySet.flashCards) {
-          await tx
+
+        const flashCardUpdates = vocabularySet.flashCards.map((flashCard) =>
+          tx
             .update(flashCards)
             .set(flashCard)
-            .where(eq(flashCards.id, flashCard.id));
-        }
+            .where(eq(flashCards.id, flashCard.id)),
+        );
+
+        await Promise.all(flashCardUpdates);
 
         return updatedVocabularySet.id;
       });
