@@ -1,13 +1,12 @@
-import { type Chat, type Message, chats, messages } from '../db/schema';
+import { type Chat, type Message, chats, messages } from '../db/db.schema';
 import { eq } from 'drizzle-orm';
 import { ServiceException } from 'src/common/service-exception';
 import { Injectable } from '@nestjs/common';
-import * as sc from '../db/schema';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { Drizzle } from '../db/db.provider';
 
 @Injectable()
 export class ChatRepository {
-  constructor(private db: NodePgDatabase<typeof sc>) {}
+  constructor(private db: Drizzle) {}
 
   public async create(newItem: Chat): Promise<string> {
     try {
