@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Logger } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception-filter';
@@ -20,7 +20,16 @@ class Application {
 
     const appService = app.get<AppService>(AppService);
     appService.configure(app);
+
     app.useGlobalFilters(new HttpExceptionFilter());
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+      }),
+    );
+
     await app.listen(process.env.PORT ?? 5000);
     Application.handleExit();
   }
@@ -83,6 +92,7 @@ void (async (): Promise<void> => {
   try {
     const application = new Application();
     const url = await application.bootstrap();
+
     logger.log(url, 'Bootstrap');
   } catch (error) {
     logger.error(error, 'Bootstrap');
