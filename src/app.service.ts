@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import * as compression from 'compression';
 // import { globalErrorMiddleware } from '@shared/middleware/error.middleware';
 // import HTTP_STATUS from 'http-status-codes';
-// import passport from 'passport';
+import * as passport from 'passport';
 // import '@auth/strategies/google-strategy';
 // import { redisConnection } from '@services/redis/redis.connection';
 // import { logger as setupServerLogger } from '@root/logger';
@@ -26,7 +26,8 @@ export class AppService {
   public configure(app: NestExpressApplication): void {
     this.standardMiddleware(app);
     this.securityMiddleware(app);
-    // this.passportMiddleware(this.app);
+    this.passportMiddleware(app);
+
     // this.globalErrorHandler(this.app);
     // this.startServer(this.app);
   }
@@ -75,10 +76,10 @@ export class AppService {
     });
   }
 
-  // private passportMiddleware(app: NestExpressApplication): void {
-  //   app.use(passport.initialize());
-  //   app.use(passport.session());
-  // }
+  private passportMiddleware(app: NestExpressApplication): void {
+    app.use(passport.initialize());
+    app.use(passport.session());
+  }
 
   // private globalErrorHandler(app: NestExpressApplication): void {
   //   app.use(globalErrorMiddleware);
