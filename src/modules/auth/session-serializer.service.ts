@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { type User } from 'src/shared/db/schema';
+import { type User } from 'src/shared/db/db.schema';
 import { type VerifyCallback } from 'passport-google-oauth20';
 
 @Injectable()
