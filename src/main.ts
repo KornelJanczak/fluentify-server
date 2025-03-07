@@ -91,9 +91,9 @@ class Application {
 void (async (): Promise<void> => {
   try {
     const application = new Application();
-    const url = await application.bootstrap();
+    await application.bootstrap();
 
-    logger.log(url, 'Bootstrap');
+    logger.log(`App listen on port: ${process.env.PORT}`, 'Bootstrap');
   } catch (error) {
     logger.error(error, 'Bootstrap');
   }
