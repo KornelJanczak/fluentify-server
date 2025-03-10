@@ -1,5 +1,6 @@
 import { IsString, MinLength, ValidateNested, IsArray } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import { FlashCard } from 'src/shared/db/db.schema';
 
 class CreateFlashCardDto {
   @IsString()
@@ -36,12 +37,6 @@ export class CreateVocabularySetDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateFlashCardDto)
-  @Transform(({ value, obj }) => {
-    console.log('value', value);
-    console.log('obj', obj);
-
-    return value;
-  })
   flashCards: CreateFlashCardDto[];
 
   createdAt: Date = new Date();
