@@ -9,14 +9,17 @@ export class VocabularySetService {
     private readonly vocabularySetRepository: VocabularySetRepository,
   ) {}
 
-  public create(
+  public async create(
     createVocabularySetDto: CreateVocabularySetDto,
     userId: string,
-  ): string {
-    // const vocabularySetId = await this.vocabularySetRepository.create(
-    //   vocabularySet,
-    //   flashCards,
-    // );
+  ): Promise<string> {
+    const vocabularySetId = await this.vocabularySetRepository.create(
+      { ...createVocabularySetDto, userId },
+      createVocabularySetDto.flashCards.map((flashCard) => ({
+        ...flashCard,
+        userId,
+      })),
+    );
 
     // if (!vocabularySetId) {
     //   throw ServiceException.NotFound({
@@ -24,7 +27,7 @@ export class VocabularySetService {
     //   });
     // }
 
-    return 'vocabularySetId';
+    return vocabularySetId;
   }
 
   // public async findAllByUserId(
