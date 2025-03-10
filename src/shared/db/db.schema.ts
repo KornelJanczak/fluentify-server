@@ -102,7 +102,7 @@ export const vocabularySets = pgTable(
     id: uuid('id').primaryKey().notNull().defaultRandom(),
     title: varchar({ length: 255 }).notNull(),
     description: varchar({ length: 255 }).notNull(),
-    createdAt: timestamp('createdAt').notNull(),
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
     userId: varchar('userId').references(() => users.id),
   },
   (table) => [
