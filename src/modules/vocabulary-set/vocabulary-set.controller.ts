@@ -29,20 +29,23 @@ export class VocabularySetController {
   constructor(public vocabularySetService: VocabularySetService) {}
 
   @Post()
-  public async create() {
-    console.log('asdasd');
+  public async create(
+    @Body() createVocabularySetDto: CreateVocabularySetDto,
+    @UserId() userId: string,
+  ) {
+    console.log('createVocabularySetDto');
+    console.log('userId', userId);
 
-    // console.log('createVocabularySetDto', createVocabularySetDto);
-    // console.log('userId', userId);
+    const id = await this.vocabularySetService.create(
+      createVocabularySetDto,
+      userId,
+    );
 
-    // const result = await this.vocabularySetService.create(
-    //   createVocabularySetDto,
-    //   userId,
-    // );
+    this.logger.log(
+      `Created vocabulary set with ID: ${id} for user: ${userId}`,
+    );
 
-    this.logger.log(`Created vocabulary set with ID: `);
-
-    return 'result';
+    return id;
   }
 
   //   @Get('user/:userId')
