@@ -47,7 +47,7 @@ export class VocabularySetController {
     return { id };
   }
 
-  @Get()
+  @Get(':page')
   public async findAllByUserId(
     @UserId() userId: string,
     @Param('page') page?: string,
