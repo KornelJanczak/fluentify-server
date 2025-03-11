@@ -1,6 +1,7 @@
 import { IsString, MinLength, ValidateNested, IsArray } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { FlashCard } from 'src/shared/db/db.schema';
+import { type VocabularySetWithFlashCardsCount } from 'src/shared/repositories/vocabulary-set.reposiory';
 
 class CreateFlashCardDto {
   @IsString()
@@ -55,4 +56,12 @@ export class UpdateVocabularySetDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateFlashCardDto)
   flashCards: UpdateFlashCardDto[];
+}
+
+export class FindAllByUserIdResponseDto {
+  @IsArray()
+  vocabularySets: VocabularySetWithFlashCardsCount[];
+
+  @IsString()
+  hasMore: boolean;
 }
