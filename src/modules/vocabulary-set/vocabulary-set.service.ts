@@ -1,7 +1,16 @@
 // filepath: /c:/Users/korne/Desktop/Fluentify-server/src/modules/vocabulary-set/vocabulary-set.service.ts
 import { Injectable } from '@nestjs/common';
-import { CreateVocabularySetDto } from './vocabulary-set.dto';
-import VocabularySetRepository from 'src/shared/repositories/vocabulary-set.reposiory';
+import {
+  type CreateVocabularySetDto,
+  type FindAllByUserIdResponseDto,
+} from './vocabulary-set.dto';
+import {
+  type FlashCard,
+  VocabularySetWithoutId,
+} from 'src/shared/db/db.schema';
+import VocabularySetRepository, {
+  type VocabularySetWithFlashCardsCount,
+} from 'src/shared/repositories/vocabulary-set.reposiory';
 
 @Injectable()
 export class VocabularySetService {
@@ -21,6 +30,8 @@ export class VocabularySetService {
       })),
     );
 
+    console.log('vocabularySetId', vocabularySetId);
+
     // if (!vocabularySetId) {
     //   throw ServiceException.NotFound({
     //     message: 'Vocabulary set not created',
@@ -30,31 +41,27 @@ export class VocabularySetService {
     return vocabularySetId;
   }
 
-  // public async findAllByUserId(
-  //   userId: string,
-  //   page?: string,
-  //   searchInput?: string,
-  // ): Promise<IGetAllVocabularySetsArgs> {
-  //   const itemsPerPage = 5;
+  public async findAllByUserId(
+    userId: string,
+    page?: string,
+    searchInput?: string,
+  ): Promise<FindAllByUserIdResponseDto> {
+    const itemsPerPage = 5;
 
-  //   const vocabularySets = await this.vocabularySetRepository.getAllByUserId(
-  //     userId,
-  //     page,
-  //     searchInput,
-  //   );
+    const vocabularySets = await this.vocabularySetRepository.findAllByUserId(
+      userId,
+      page,
+      searchInput,
+    );
 
-  //   if (!vocabularySets) {
-  //     throw new NotFoundException('Vocabulary sets not found');
-  //   }
+    const hasMore = vocabularySets.length > itemsPerPage;
 
-  //   const hasMore = vocabularySets.length > itemsPerPage;
+    const paginatedResults = hasMore
+      ? vocabularySets.slice(0, itemsPerPage)
+      : vocabularySets;
 
-  //   const paginatedResults = hasMore
-  //     ? vocabularySets.slice(0, itemsPerPage)
-  //     : vocabularySets;
-
-  //   return { vocabularySets: paginatedResults, hasMore };
-  // }
+    return { vocabularySets: paginatedResults, hasMore };
+  }
 
   // public async findOneWithFlashCardsById(
   //   id: string,
