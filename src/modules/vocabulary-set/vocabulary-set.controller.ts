@@ -14,12 +14,14 @@ import {
 import { VocabularySetService } from './vocabulary-set.service';
 import {
   CreateVocabularySetDto,
+  FindAllByUserIdResponseDto,
   UpdateVocabularySetDto,
 } from './vocabulary-set.dto';
 import { GoogleAuthGuard } from '../auth/strategies/google.guard';
 import { Request } from 'express';
 import { User } from 'src/shared/db/db.schema';
 import { UserId } from 'src/common/decorators/user-id.decorator';
+import { type VocabularySetWithFlashCardsCount } from 'src/shared/repositories/vocabulary-set.reposiory';
 
 @Controller('vocabulary-set')
 @UseGuards(GoogleAuthGuard)
@@ -32,10 +34,7 @@ export class VocabularySetController {
   public async create(
     @Body() createVocabularySetDto: CreateVocabularySetDto,
     @UserId() userId: string,
-  ) {
-    console.log('createVocabularySetDto');
-    console.log('userId', userId);
-
+  ): Promise<{ id: string }> {
     const id = await this.vocabularySetService.create(
       createVocabularySetDto,
       userId,
@@ -45,18 +44,25 @@ export class VocabularySetController {
       `Created vocabulary set with ID: ${id} for user: ${userId}`,
     );
 
-    return id;
+    return { id };
   }
 
-  //   @Get('user/:userId')
-  //   public async findAll(
-  //     @Param('page') page: string,
-  //     @Param('searchInput') searchInput?: string,
-  //   ) {
-  //     const result = await this.vocabularySetService.findAllByUserId(userId);
-  //     this.logger.log(`Found vocabulary sets for user ID: ${userId}`);
-  //     return result;
-  //   }
+  @Get()
+  public async findAllByUserId(
+    @UserId() userId: string,
+    @Param('page') page?: string,
+    @Param('searchInput') searchInput?: string,
+  ): Promise<FindAllByUserIdResponseDto> {
+    const result = await this.vocabularySetService.findAllByUserId(
+      userId,
+      page,
+      searchInput,
+    );
+
+    this.logger.log(`Found vocabulary sets for user ID: ${userId}`);
+
+    return result;
+  }
 
   //   @Get(':id')
   //   public async findOne(@Param('id') id: string) {
