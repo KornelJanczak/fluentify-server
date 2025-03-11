@@ -48,7 +48,7 @@ export class VocabularySetRepository {
     }
   }
 
-  public async getAllByUserId(
+  public async findAllByUserId(
     userId: string,
     page?: string,
     searchInput?: string,
