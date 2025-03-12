@@ -10,6 +10,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ServiceException } from 'src/common/service-exception';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
+import { FindOneByIdResponseDto } from 'src/modules/vocabulary-set/vocabulary-set.dto';
 
 @Injectable()
 export class VocabularySetRepository {
@@ -89,9 +90,7 @@ export class VocabularySetRepository {
     }
   }
 
-  public async getWithFlashCardsById(
-    id: string,
-  ): Promise<VocabularySetWithFlashCards> {
+  public async findOneById(id: string): Promise<FindOneByIdResponseDto> {
     try {
       return await this.db.query.vocabularySets.findFirst({
         where: eq(vocabularySets.id, id),
