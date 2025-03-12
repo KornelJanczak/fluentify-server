@@ -15,6 +15,7 @@ import { VocabularySetService } from './vocabulary-set.service';
 import {
   CreateVocabularySetDto,
   FindAllByUserIdResponseDto,
+  FindOneByIdResponseDto,
   UpdateVocabularySetDto,
 } from './vocabulary-set.dto';
 import { GoogleAuthGuard } from '../auth/strategies/google.guard';
@@ -64,13 +65,14 @@ export class VocabularySetController {
     return result;
   }
 
-  //   @Get(':id')
-  //   public async findOne(@Param('id') id: string) {
-  //     const result =
-  //       await this.vocabularySetService.findOneWithFlashCardsById(id);
-  //     this.logger.log(`Found vocabulary set with ID: ${id}`);
-  //     return result;
-  //   }
+  @Get(':id')
+  public async findOneById(
+    @Param('id') id: string,
+  ): Promise<FindOneByIdResponseDto> {
+    const result = await this.vocabularySetService.findOneById(id);
+    this.logger.log(`Found vocabulary set with ID: ${id}`);
+    return result;
+  }
 
   //   @Put(':id')
   //   public async update(
