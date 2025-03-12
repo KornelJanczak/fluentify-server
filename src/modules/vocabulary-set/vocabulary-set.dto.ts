@@ -65,3 +65,21 @@ export class FindAllByUserIdResponseDto {
   @IsString()
   hasMore: boolean;
 }
+
+export class FindOneByIdResponseDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  @MinLength(2)
+  title: string;
+
+  @IsString()
+  @MinLength(2)
+  description: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateFlashCardDto)
+  flashCards: Omit<FlashCard, 'vocabularySetId'>[];
+}
