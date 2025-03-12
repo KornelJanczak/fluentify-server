@@ -1,6 +1,7 @@
 // filepath: /c:/Users/korne/Desktop/Fluentify-server/src/modules/vocabulary-set/vocabulary-set.service.ts
 import { Injectable } from '@nestjs/common';
 import {
+  FindOneByIdResponseDto,
   type CreateVocabularySetDto,
   type FindAllByUserIdResponseDto,
 } from './vocabulary-set.dto';
@@ -63,18 +64,15 @@ export class VocabularySetService {
     return { vocabularySets: paginatedResults, hasMore };
   }
 
-  // public async findOneWithFlashCardsById(
-  //   id: string,
-  // ): Promise<VocabularySetWithFlashCards> {
-  //   const vocabularySet =
-  //     await this.vocabularySetRepository.getWithFlashCardsById(id);
+  public async findOneById(id: string): Promise<FindOneByIdResponseDto> {
+    const vocabularySet = await this.vocabularySetRepository.findOneById(id);
 
-  //   if (!vocabularySet) {
-  //     throw new NotFoundException('Vocabulary set not found');
-  //   }
+    // if (!vocabularySet) {
+    //   throw new NotFoundException('Vocabulary set not found');
+    // }
 
-  //   return vocabularySet;
-  // }
+    return vocabularySet;
+  }
 
   // public async update(
   //   id: string,
