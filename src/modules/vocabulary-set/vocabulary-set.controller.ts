@@ -50,6 +50,9 @@ export class VocabularySetController {
     @Param('page') page?: string,
     @Param('searchInput') searchInput?: string,
   ): Promise<FindAllByUserIdResponseDto> {
+    console.log('page', page);
+    console.log('searchInput', searchInput);
+
     const result = await this.vocabularySetService.findAllByUserId(
       userId,
       page,
@@ -66,7 +69,9 @@ export class VocabularySetController {
     @Param('id') id: string,
   ): Promise<FindOneByIdResponseDto> {
     const result = await this.vocabularySetService.findOneById(id);
+
     this.logger.log(`Found vocabulary set with ID: ${id}`);
+
     return result;
   }
 
