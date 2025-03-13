@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as Redis from 'redis';
-import { ServiceException } from '../../common/service-exception';
+import { ServiceError } from '../../common/service-error';
 
 @Injectable()
 export class RedisService {
@@ -18,7 +18,7 @@ export class RedisService {
         this.logger.log('Redis connection established');
       })
       .catch((error: Error) => {
-        throw ServiceException.RedisError({
+        throw ServiceError.RedisError({
           message: error.message,
           stack: error.stack,
         });
@@ -30,7 +30,7 @@ export class RedisService {
   //       if (!this.client.isOpen) await this.client.connect();
   //     } catch (error: unknown) {
   //       if (error instanceof Error)
-  //         throw ServiceException.RedisError({
+  //         throw ServiceError.RedisError({
   //           message: error.message,
   //           stack: error.stack,
   //         });
