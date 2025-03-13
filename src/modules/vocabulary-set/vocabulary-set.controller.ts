@@ -9,20 +9,16 @@ import {
   Put,
   Logger,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { VocabularySetService } from './vocabulary-set.service';
-import {
+import type {
   CreateVocabularySetDto,
   FindAllByUserIdResponseDto,
   FindOneByIdResponseDto,
   UpdateVocabularySetDto,
 } from './vocabulary-set.dto';
 import { GoogleAuthGuard } from '../auth/strategies/google.guard';
-import { Request } from 'express';
-import { User } from 'src/shared/db/db.schema';
 import { UserId } from 'src/common/decorators/user-id.decorator';
-import { type VocabularySetWithFlashCardsCount } from 'src/shared/repositories/vocabulary-set.reposiory';
 
 @Controller('vocabulary-set')
 @UseGuards(GoogleAuthGuard)
@@ -74,23 +70,29 @@ export class VocabularySetController {
     return result;
   }
 
-  //   @Put(':id')
-  //   public async update(
-  //     @Param('id') id: string,
-  //     @Body() updateVocabularySetDto: UpdateVocabularySetDto,
-  //   ) {
-  //     const result = await this.vocabularySetService.update(
-  //       id,
-  //       updateVocabularySetDto,
-  //     );
-  //     this.logger.log(`Updated vocabulary set with ID: ${id}`);
-  //     return result;
-  //   }
+  @Put(':id')
+  public async update(
+    @Param('id') id: string,
+    @Body() updateVocabularySetDto: UpdateVocabularySetDto,
+  ) {
+    const result = await this.vocabularySetService.update(
+      id,
+      updateVocabularySetDto,
+    );
 
-  //   @Delete(':id')
-  //   public async delete(@Param('id') id: string) {
-  //     const result = await this.vocabularySetService.delete(id);
-  //     this.logger.log(`Deleted vocabulary set with ID: ${id}`);
-  //     return result;
-  //   }
+    this.logger.log(`Updated vocabulary set with ID: ${id}`);
+
+    return result;
+  }
+
+  @Delete(':id')
+  public async delete(@Param('id') id: string) {
+    const deletedVocabularySetId = await this.vocabularySetService.delete(id);
+
+    this.logger.log(
+      `Deleted vocabulary set with ID: ${deletedVocabularySetId}`,
+    );
+
+    return deletedVocabularySetId;
+  }
 }
