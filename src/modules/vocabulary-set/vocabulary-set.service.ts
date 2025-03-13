@@ -1,17 +1,12 @@
 // filepath: /c:/Users/korne/Desktop/Fluentify-server/src/modules/vocabulary-set/vocabulary-set.service.ts
 import { Injectable } from '@nestjs/common';
-import {
+import type {
   FindOneByIdResponseDto,
-  type CreateVocabularySetDto,
-  type FindAllByUserIdResponseDto,
+  UpdateVocabularySetDto,
+  CreateVocabularySetDto,
+  FindAllByUserIdResponseDto,
 } from './vocabulary-set.dto';
-import {
-  type FlashCard,
-  VocabularySetWithoutId,
-} from 'src/shared/db/db.schema';
-import VocabularySetRepository, {
-  type VocabularySetWithFlashCardsCount,
-} from 'src/shared/repositories/vocabulary-set.reposiory';
+import type { VocabularySetRepository } from 'src/shared/repositories/vocabulary-set.reposiory';
 
 @Injectable()
 export class VocabularySetService {
@@ -74,53 +69,24 @@ export class VocabularySetService {
     return vocabularySet;
   }
 
-  // public async update(
-  //   id: string,
-  //   vocabularySet: VocabularySetWithFlashCards,
-  // ): Promise<string> {
-  //   const updatedVocabularySetId = await this.vocabularySetRepository.update(
-  //     id,
-  //     vocabularySet,
-  //   );
+  public async update(
+    id: string,
+    vocabularySet: UpdateVocabularySetDto,
+  ): Promise<string> {
+    const updatedVocabularySetId = await this.vocabularySetRepository.update(
+      id,
+      vocabularySet,
+    );
 
-  //   if (!updatedVocabularySetId) {
-  //     throw new NotFoundException('Vocabulary set not updated');
-  //   }
+    // if (!updatedVocabularySetId) {
+    //   throw new NotFoundException('Vocabulary set not updated');
+    // }
 
-  //   return updatedVocabularySetId;
-  // }
+    return updatedVocabularySetId;
+  }
 
-  // public async delete(id: string): Promise<string> {
-  //   await this.vocabularySetRepository.deleteVocabularySetById(id);
-  //   return id;
-  // }
-
-  // private formatVocabularySetWithFlashCards({
-  //   userId,
-  //   title,
-  //   description,
-  //   flashCards,
-  // }: ICreateVocabularySetArgs): {
-  //   vocabularySet: VocabularySetWithoutId;
-  //   flashCards: FlashCardWithoutIds[];
-  // } {
-  //   const formattedVocabularySet: Omit<VocabularySet, 'id'> = {
-  //     userId,
-  //     createdAt: new Date(),
-  //     title,
-  //     description,
-  //   };
-
-  //   const formattedFlashCards = flashCards.map((flashCard: FlashCard) => ({
-  //     createAt: new Date(),
-  //     translation: flashCard.translation,
-  //     definition: flashCard.definition,
-  //     userId,
-  //   }));
-
-  //   return {
-  //     vocabularySet: formattedVocabularySet,
-  //     flashCards: formattedFlashCards,
-  //   };
-  // }
+  public async delete(id: string): Promise<string> {
+    await this.vocabularySetRepository.deleteById(id);
+    return id;
+  }
 }
