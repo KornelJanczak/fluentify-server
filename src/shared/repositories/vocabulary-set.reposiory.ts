@@ -7,10 +7,13 @@ import {
   flashCards,
 } from '../db/db.schema';
 import { Injectable, Inject } from '@nestjs/common';
-import { ServiceException } from 'src/common/service-exception';
+import { ServiceError } from 'src/common/service-exception';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
-import { FindOneByIdResponseDto } from 'src/modules/vocabulary-set/vocabulary-set.dto';
+import {
+  FindOneByIdResponseDto,
+  UpdateVocabularySetDto,
+} from 'src/modules/vocabulary-set/vocabulary-set.dto';
 
 @Injectable()
 export class VocabularySetRepository {
@@ -22,7 +25,7 @@ export class VocabularySetRepository {
   ): Promise<string> {
     try {
       return await this.db.transaction(async (tx) => {
-        const [vocabularySet] = await tx
+        const [{ id: vocabularySetId }] = await tx
           .insert(vocabularySets)
           .values(newVocabularySet)
           .returning({ id: vocabularySets.id });
@@ -30,22 +33,19 @@ export class VocabularySetRepository {
         const flashCardsData: FlashCard[] = newFlashCards.map(
           (flashCard: FlashCard) => ({
             ...flashCard,
-            vocabularySetId: vocabularySet.id,
+            vocabularySetId,
           }),
         );
 
         await tx.insert(flashCards).values(flashCardsData).returning();
 
-        return vocabularySet.id;
+        return vocabularySetId;
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError({
+        message: error.message,
+        stack: error.stack,
+      });
     }
   }
 
@@ -80,13 +80,10 @@ export class VocabularySetRepository {
         .leftJoin(flashCards, eq(flashCards.vocabularySetId, vocabularySets.id))
         .groupBy(vocabularySets.id);
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError({
+        message: error.message,
+        stack: error.stack,
+      });
     }
   }
 
@@ -105,30 +102,27 @@ export class VocabularySetRepository {
         },
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError({
+        message: error.message,
+        stack: error.stack,
+      });
     }
   }
 
-  public async updateVocabularySet(
+  public async update(
     id: string,
-    vocabularySet: VocabularySetWithFlashCards,
+    vocabularySet: UpdateVocabularySetDto,
   ): Promise<string> {
     try {
       return await this.db.transaction(async (tx) => {
-        const [updatedVocabularySet] = await tx
+        const [{ id: vocabularySetId }] = await tx
           .update(vocabularySets)
           .set({
             title: vocabularySet.title,
             description: vocabularySet.description,
           })
           .where(eq(vocabularySets.id, id))
-          .returning();
+          .returning({ id: vocabularySets.id });
 
         const flashCardUpdates = vocabularySet.flashCards.map((flashCard) =>
           tx
@@ -139,33 +133,33 @@ export class VocabularySetRepository {
 
         await Promise.all(flashCardUpdates);
 
-        return updatedVocabularySet.id;
+        return vocabularySetId;
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError({
+        message: error.message,
+        stack: error.stack,
+      });
     }
   }
 
-  public async deleteVocabularySetById(id: string): Promise<void> {
+  public async deleteById(id: string): Promise<string> {
     try {
-      await this.db.transaction(async (tx) => {
-        await tx.delete(vocabularySets).where(eq(vocabularySets.id, id));
+      return await this.db.transaction(async (tx) => {
+        const [{ id: vocabularySetId }] = await tx
+          .delete(vocabularySets)
+          .where(eq(vocabularySets.id, id))
+          .returning({ id: vocabularySets.id });
+
         await tx.delete(flashCards).where(eq(flashCards.vocabularySetId, id));
+
+        return vocabularySetId;
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError({
+        message: error.message,
+        stack: error.stack,
+      });
     }
   }
 }
