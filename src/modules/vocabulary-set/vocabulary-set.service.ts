@@ -2,17 +2,16 @@
 import { Injectable } from '@nestjs/common';
 import type {
   FindOneByIdResponseDto,
-  UpdateVocabularySetDto,
   CreateVocabularySetDto,
   FindAllByUserIdResponseDto,
+  UpdateVocabularySetDto,
 } from './vocabulary-set.dto';
-import type { VocabularySetRepository } from 'src/shared/repositories/vocabulary-set.reposiory';
+import VocabularySetRepository from 'src/shared/repositories/vocabulary-set.repository';
+import { ServiceError } from 'src/common/service-error';
 
 @Injectable()
 export class VocabularySetService {
-  constructor(
-    private readonly vocabularySetRepository: VocabularySetRepository,
-  ) {}
+  constructor(private vocabularySetRepository: VocabularySetRepository) {}
 
   public async create(
     createVocabularySetDto: CreateVocabularySetDto,
@@ -26,13 +25,7 @@ export class VocabularySetService {
       })),
     );
 
-    console.log('vocabularySetId', vocabularySetId);
-
-    // if (!vocabularySetId) {
-    //   throw ServiceException.NotFound({
-    //     message: 'Vocabulary set not created',
-    //   });
-    // }
+    if (!vocabularySetId) throw Error('Failed to create vocabulary set');
 
     return vocabularySetId;
   }
@@ -50,6 +43,9 @@ export class VocabularySetService {
       searchInput,
     );
 
+    if (!vocabularySets)
+      throw ServiceError.NotFoundError(`Not found user with id: ${userId}`);
+
     const hasMore = vocabularySets.length > itemsPerPage;
 
     const paginatedResults = hasMore
@@ -62,9 +58,10 @@ export class VocabularySetService {
   public async findOneById(id: string): Promise<FindOneByIdResponseDto> {
     const vocabularySet = await this.vocabularySetRepository.findOneById(id);
 
-    // if (!vocabularySet) {
-    //   throw new NotFoundException('Vocabulary set not found');
-    // }
+    if (!vocabularySet)
+      throw ServiceError.NotFoundError(
+        `Not found vocabulary set with id: ${id}`,
+      );
 
     return vocabularySet;
   }
@@ -78,15 +75,12 @@ export class VocabularySetService {
       vocabularySet,
     );
 
-    // if (!updatedVocabularySetId) {
-    //   throw new NotFoundException('Vocabulary set not updated');
-    // }
+    if (!updatedVocabularySetId) throw Error('Failed to update vocabulary set');
 
     return updatedVocabularySetId;
   }
 
   public async delete(id: string): Promise<string> {
-    await this.vocabularySetRepository.deleteById(id);
-    return id;
+    return await this.vocabularySetRepository.deleteById(id);
   }
 }
