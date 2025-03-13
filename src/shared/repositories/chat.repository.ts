@@ -1,12 +1,12 @@
 import { type Chat, type Message, chats, messages } from '../db/db.schema';
 import { eq } from 'drizzle-orm';
-import { ServiceException } from 'src/common/service-exception';
-import { Injectable } from '@nestjs/common';
-import { Drizzle } from '../db/db.provider';
+import { ServiceError } from 'src/common/service-error';
+import { Inject, Injectable } from '@nestjs/common';
+import { Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
 
 @Injectable()
 export class ChatRepository {
-  constructor(private db: Drizzle) {}
+  constructor(@Inject(DrizzleAsyncProvider) private db: Drizzle) {}
 
   public async create(newItem: Chat): Promise<string> {
     try {
@@ -18,7 +18,7 @@ export class ChatRepository {
       return chat.id;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -32,7 +32,7 @@ export class ChatRepository {
       return await this.db.select().from(chats).where(eq(chats.userId, userId));
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -47,7 +47,7 @@ export class ChatRepository {
       return item;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -74,7 +74,7 @@ export class ChatRepository {
       });
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -93,7 +93,7 @@ export class ChatRepository {
       return chat.id;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -111,7 +111,7 @@ export class ChatRepository {
       return id;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
