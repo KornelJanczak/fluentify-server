@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { type User, users } from '../db/db.schema';
-import { ServiceException } from 'src/common/service-exception';
+import { ServiceError } from 'src/common/service-error';
 import { Inject, Injectable } from '@nestjs/common';
 import { type Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
 
@@ -18,7 +18,7 @@ class UserRepository {
       return createdUser;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -37,7 +37,7 @@ class UserRepository {
       return user;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
@@ -53,7 +53,7 @@ class UserRepository {
       return user;
     } catch (error) {
       if (error instanceof Error) {
-        throw ServiceException.DatabaseError({
+        throw ServiceError.DatabaseError({
           message: error.message,
           stack: error.stack,
         });
