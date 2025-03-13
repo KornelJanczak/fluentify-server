@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ServiceException extends Error {
+export class ServiceError extends Error {
   constructor(name: string, { message, stack }: ServerErrorArguments) {
     super(message);
     this.name = name;
@@ -9,33 +9,33 @@ export class ServiceException extends Error {
   }
 
   static NotFound(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.NotFound;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.NotFound;
+    return new ServiceError(name, descriptors);
   }
 
   static AuthError(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.AuthError;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.AuthError;
+    return new ServiceError(name, descriptors);
   }
 
   static DeletionError(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.DeletionError;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.DeletionError;
+    return new ServiceError(name, descriptors);
   }
 
   static DatabaseError(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.DatabaseError;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.DatabaseError;
+    return new ServiceError(name, descriptors);
   }
 
   static RedisError(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.RedisError;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.RedisError;
+    return new ServiceError(name, descriptors);
   }
 
   static WorkerError(this: void, descriptors: ServerErrorArguments) {
-    const { name } = ServiceException.WorkerError;
-    return new ServiceException(name, descriptors);
+    const { name } = ServiceError.WorkerError;
+    return new ServiceError(name, descriptors);
   }
 }
 
