@@ -5,6 +5,7 @@ import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Logger } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception-filter';
+import { ServiceErrorFilter } from './common/filters/service-error-filter';
 
 const logger = new Logger('Bootstrap');
 
@@ -22,6 +23,7 @@ class Application {
     appService.configure(app);
 
     app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalFilters(new ServiceErrorFilter());
 
     app.useGlobalPipes(
       new ValidationPipe({
