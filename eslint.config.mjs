@@ -36,6 +36,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/require-await': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
 
       'prettier/prettier': [
         'error',
