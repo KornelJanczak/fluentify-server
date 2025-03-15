@@ -30,6 +30,10 @@ export class ServiceError extends Error {
     return new ServiceError('RedisError', message, stack);
   }
 
+  static ExternalServiceError(message: string, stack?: any) {
+    return new ServiceError('ExternalServiceError', message, stack);
+  }
+
   static WorkerError(message: string, stack?: any) {
     return new ServiceError('WorkerError', message, stack);
   }
