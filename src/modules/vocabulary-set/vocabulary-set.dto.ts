@@ -1,5 +1,5 @@
 import { IsString, MinLength, ValidateNested, IsArray } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { FlashCard } from 'src/shared/db/db.schema';
 import { type VocabularySetWithFlashCardsCount } from 'src/shared/repositories/vocabulary-set.repository';
 
