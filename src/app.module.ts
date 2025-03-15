@@ -7,6 +7,9 @@ import { PassportModule } from '@nestjs/passport';
 import { RedisModule } from './shared/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { VocabularySetModule } from './modules/vocabulary-set/vocabulary-set.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { ChatService } from './chat/chat/chat.service';
+import { ChatService } from './module/chat/chat.service';
 
 @Module({
   imports: [
@@ -19,7 +22,8 @@ import { VocabularySetModule } from './modules/vocabulary-set/vocabulary-set.mod
     AuthModule,
     VocabularySetModule,
     RedisModule,
+    ChatModule,
   ],
-  providers: [AppService],
+  providers: [AppService, ChatService],
 })
 export class AppModule {}
