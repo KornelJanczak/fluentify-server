@@ -42,7 +42,7 @@ export class VocabularySetRepository {
         return vocabularySetId;
       });
     } catch (error) {
-      throw ServiceError.DatabaseError(error.message);
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -98,7 +98,7 @@ export class VocabularySetRepository {
         },
       });
     } catch (error) {
-      throw ServiceError.DatabaseError(error.message);
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -106,6 +106,9 @@ export class VocabularySetRepository {
     id: string,
     vocabularySet: UpdateVocabularySetDto,
   ): Promise<string> {
+    console.log('update', vocabularySet.description);
+    console.log('update id', id);
+
     try {
       return await this.db.transaction(async (tx) => {
         const [{ id: vocabularySetId }] = await tx
@@ -129,7 +132,7 @@ export class VocabularySetRepository {
         return vocabularySetId;
       });
     } catch (error) {
-      throw ServiceError.DatabaseError(error.message);
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -146,7 +149,7 @@ export class VocabularySetRepository {
         return vocabularySetId;
       });
     } catch (error) {
-      throw ServiceError.DatabaseError(error.message);
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 }
