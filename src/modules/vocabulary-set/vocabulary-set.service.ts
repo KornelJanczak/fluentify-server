@@ -1,6 +1,6 @@
 // filepath: /c:/Users/korne/Desktop/Fluentify-server/src/modules/vocabulary-set/vocabulary-set.service.ts
 import { Injectable } from '@nestjs/common';
-import type {
+import {
   FindOneByIdResponseDto,
   CreateVocabularySetDto,
   FindAllByUserIdResponseDto,
@@ -25,7 +25,8 @@ export class VocabularySetService {
       })),
     );
 
-    if (!vocabularySetId) throw Error('Failed to create vocabulary set');
+    if (!vocabularySetId)
+      throw ServiceError.NotFoundError('Failed to create vocabulary set');
 
     return vocabularySetId;
   }
@@ -75,7 +76,8 @@ export class VocabularySetService {
       vocabularySet,
     );
 
-    if (!updatedVocabularySetId) throw Error('Failed to update vocabulary set');
+    if (!updatedVocabularySetId)
+      throw ServiceError.NotFoundError('Failed to update vocabulary set');
 
     return updatedVocabularySetId;
   }
