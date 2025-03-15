@@ -126,7 +126,7 @@ export const vocabularySetsRelations = relations(
 );
 
 export type VocabularySet = InferSelectModel<typeof vocabularySets>;
-export type VocabularySetWithoutId = Omit<VocabularySet, 'id'>;
+export type VocabularySetWithoutId = Omit<VocabularySet, 'id' | 'createdAt'>;
 
 // #################################################################### //
 
