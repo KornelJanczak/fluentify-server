@@ -9,7 +9,7 @@ import { ServiceErrorFilter } from './common/filters/service-error-filter';
 
 const logger = new Logger('Bootstrap');
 
-class Application {
+class Main {
   public async bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
       logger: new ConsoleLogger({
@@ -22,8 +22,8 @@ class Application {
     const appService = app.get<AppService>(AppService);
     appService.configure(app);
 
-    app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalFilters(new ServiceErrorFilter());
+    app.useGlobalFilters(new HttpExceptionFilter());
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -33,7 +33,7 @@ class Application {
     );
 
     await app.listen(process.env.PORT ?? 5000);
-    Application.handleExit();
+    Main.handleExit();
   }
 
   private static handleExit(): void {
@@ -42,7 +42,7 @@ class Application {
         message: `There was an uncaught error: ${error.message}`,
         stack: error.stack,
       });
-      Application.shutDownProperly(1);
+      Main.shutDownProperly(1);
     });
 
     process.on('unhandledRejection', (reason: any) => {
@@ -50,12 +50,12 @@ class Application {
         message: `Unhandled rejection at promise: ${reason}`,
         stack: reason instanceof Error ? reason.stack : undefined,
       });
-      Application.shutDownProperly(2);
+      Main.shutDownProperly(2);
     });
 
     process.on('SIGTERM', () => {
       logger.error('Caught SIGTERM');
-      Application.shutDownProperly(2);
+      Main.shutDownProperly(2);
     });
 
     process.on('SIGINT', () => {
@@ -63,7 +63,7 @@ class Application {
         service: 'SIGINT',
         message: 'Caught SIGINT',
       });
-      Application.shutDownProperly(2);
+      Main.shutDownProperly(2);
     });
 
     process.on('exit', () => {
@@ -92,7 +92,7 @@ class Application {
 
 void (async (): Promise<void> => {
   try {
-    const application = new Application();
+    const application = new Main();
     await application.bootstrap();
 
     logger.log(`App listen on port: ${process.env.PORT}`, 'Bootstrap');
