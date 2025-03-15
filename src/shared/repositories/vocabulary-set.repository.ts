@@ -106,9 +106,6 @@ export class VocabularySetRepository {
     id: string,
     vocabularySet: UpdateVocabularySetDto,
   ): Promise<string> {
-    console.log('update', vocabularySet.description);
-    console.log('update id', id);
-
     try {
       return await this.db.transaction(async (tx) => {
         const [{ id: vocabularySetId }] = await tx
