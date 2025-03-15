@@ -8,10 +8,11 @@ import {
   Delete,
   Put,
   Logger,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { VocabularySetService } from './vocabulary-set.service';
-import type {
+import {
   CreateVocabularySetDto,
   FindAllByUserIdResponseDto,
   FindOneByIdResponseDto,
@@ -31,29 +32,26 @@ export class VocabularySetController {
   public async create(
     @Body() createVocabularySetDto: CreateVocabularySetDto,
     @UserId() userId: string,
-  ): Promise<{ id: string }> {
-    const id = await this.vocabularySetService.create(
+  ): Promise<{ createdVocabularySetId: string }> {
+    const createdVocabularySetId = await this.vocabularySetService.create(
       createVocabularySetDto,
       userId,
     );
 
     this.logger.log(
-      `Created vocabulary set with ID: ${id} for user: ${userId}`,
+      `Created vocabulary set with ID: ${createdVocabularySetId} for user: ${userId}`,
     );
 
-    return { id };
+    return { createdVocabularySetId };
   }
 
   @Get(':page')
   public async findAllByUserId(
     @UserId() userId: string,
-    @Param('page') page?: string,
-    @Param('searchInput') searchInput?: string,
+    @Param('page') page: string,
+    @Query('searchInput') searchInput?: string,
   ): Promise<FindAllByUserIdResponseDto> {
-    console.log('page', page);
-    console.log('searchInput', searchInput);
-
-    const result = await this.vocabularySetService.findAllByUserId(
+    const vocabularySets = await this.vocabularySetService.findAllByUserId(
       userId,
       page,
       searchInput,
@@ -61,43 +59,45 @@ export class VocabularySetController {
 
     this.logger.log(`Found vocabulary sets for user ID: ${userId}`);
 
-    return result;
+    return vocabularySets;
   }
 
-  @Get(':id')
+  @Get('/details/:id')
   public async findOneById(
     @Param('id') id: string,
   ): Promise<FindOneByIdResponseDto> {
-    const result = await this.vocabularySetService.findOneById(id);
+    const vocabularySet = await this.vocabularySetService.findOneById(id);
 
     this.logger.log(`Found vocabulary set with ID: ${id}`);
 
-    return result;
+    return vocabularySet;
   }
 
   @Put(':id')
   public async update(
     @Param('id') id: string,
     @Body() updateVocabularySetDto: UpdateVocabularySetDto,
-  ) {
-    const result = await this.vocabularySetService.update(
+  ): Promise<{ vocabularySetId: string }> {
+    const vocabularySetId = await this.vocabularySetService.update(
       id,
       updateVocabularySetDto,
     );
 
-    this.logger.log(`Updated vocabulary set with ID: ${id}`);
+    this.logger.log(`Updated vocabulary set with ID: ${vocabularySetId}`);
 
-    return result;
+    return { vocabularySetId };
   }
 
   @Delete(':id')
-  public async delete(@Param('id') id: string) {
+  public async delete(
+    @Param('id') id: string,
+  ): Promise<{ deletedVocabularySetId: string }> {
     const deletedVocabularySetId = await this.vocabularySetService.delete(id);
 
     this.logger.log(
       `Deleted vocabulary set with ID: ${deletedVocabularySetId}`,
     );
 
-    return deletedVocabularySetId;
+    return { deletedVocabularySetId };
   }
 }
