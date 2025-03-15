@@ -3,60 +3,56 @@ import { eq } from 'drizzle-orm';
 import { ServiceError } from 'src/common/service-error';
 import { Inject, Injectable } from '@nestjs/common';
 import { Drizzle, DrizzleAsyncProvider } from '../db/db.provider';
+import {
+  CreateChatDto,
+  FindWithMessagesByIdResponseDto,
+} from 'src/modules/chat/chat.dto';
 
 @Injectable()
 export class ChatRepository {
   constructor(@Inject(DrizzleAsyncProvider) private db: Drizzle) {}
 
-  public async create(newItem: Chat): Promise<string> {
+  public async create(
+    createChatDto: CreateChatDto,
+    userId: string,
+  ): Promise<string> {
+    const newChat = {
+      ...createChatDto,
+      userId,
+    };
+
     try {
       const [chat] = await this.db
         .insert(chats)
-        .values(newItem)
+        .values(newChat)
         .returning({ id: chats.id });
 
       return chat.id;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
-  public async getByUserId(userId: string): Promise<Chat[]> {
+  public async findAllByUserId(userId: string): Promise<Chat[]> {
     try {
       return await this.db.select().from(chats).where(eq(chats.userId, userId));
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
-  public async getById(id: string): Promise<Chat> {
+  public async findById(id: string): Promise<Chat> {
     try {
       const [item] = await this.db.select().from(chats).where(eq(chats.id, id));
       return item;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
-  public async getWithMessagesById(chatId: string): Promise<ChatWithMessages> {
+  public async findWithMessagesById(
+    chatId: string,
+  ): Promise<FindWithMessagesByIdResponseDto> {
     try {
       return await this.db.query.chats.findFirst({
         where: eq(chats.id, chatId),
@@ -73,13 +69,7 @@ export class ChatRepository {
         },
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -92,17 +82,11 @@ export class ChatRepository {
 
       return chat.id;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
-  public async saveChatMessages(newMessages: Message[]): Promise<string> {
+  public async saveMessages(newMessages: Message[]): Promise<string> {
     try {
       const [{ id }] = await this.db
         .insert(messages)
@@ -110,13 +94,7 @@ export class ChatRepository {
         .returning({ id: messages.id });
       return id;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 }
