@@ -39,8 +39,6 @@ export class CreateVocabularySetDto {
   @ValidateNested({ each: true })
   @Type(() => CreateFlashCardDto)
   flashCards: CreateFlashCardDto[];
-
-  createdAt: Date = new Date();
 }
 
 export class UpdateVocabularySetDto {
