@@ -17,13 +17,7 @@ class UserRepository {
 
       return createdUser;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -36,13 +30,7 @@ class UserRepository {
 
       return user;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 
@@ -52,13 +40,7 @@ class UserRepository {
 
       return user;
     } catch (error) {
-      if (error instanceof Error) {
-        throw ServiceError.DatabaseError({
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      throw error;
+      throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
 }
