@@ -35,7 +35,7 @@ export class ChatController {
     private chatStreamService: ChatStreamService,
   ) {}
 
-  @Post('start')
+  @Post('start-chat')
   public async startChat(
     @Body() startChatDto: StartChatDto,
     @User() user: UserType,
@@ -43,8 +43,7 @@ export class ChatController {
   ): Promise<void> {
     this.logger.log(`User ${user.id} is starting chat stream`);
 
-    await this.chatStreamService.startChatStream({
-      userId: user.id,
+    return await this.chatStreamService.startStream({
       tutorId: user.tutorId,
       studyingLanguageLevel: user.studyingLanguageLevel,
       res,
@@ -52,16 +51,18 @@ export class ChatController {
     });
   }
 
-  @Post()
+  @Post('create-chat')
   public async create(
     @Body() createChatDto: CreateChatDto,
     @UserId() userId: string,
-  ): Promise<{ chatId: string }> {
+  ): Promise<string> {
+    console.log('createChatDto', createChatDto);
+
     const chatId = await this.chatService.create(createChatDto, userId);
 
     this.logger.log(`User ${userId} has created chat ${chatId}`);
 
-    return { chatId };
+    return chatId;
   }
 
   @Get()
