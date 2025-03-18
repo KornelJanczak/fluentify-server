@@ -19,9 +19,6 @@ class BaseChatDto {
   usedTokens?: number;
 
   @IsString()
-  startedAt: Date;
-
-  @IsString()
   category: string;
 
   @IsString()
@@ -57,28 +54,16 @@ export class StartChatDto {
   @IsString()
   chatId: string;
 
-  @IsString()
-  tutorId: string;
-
-  @IsString()
-  userId: string;
-
-  @IsString()
-  studyingLanguageLevel: string;
-
-  @IsOptional()
-  @IsUUID()
-  vocabularySetId?: string;
-
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => BaseMessageDto)
-  messages: BaseMessageDto[];
+  @Type(() =>
+    OmitType(BaseMessageDto, ['id', 'usedTokens', 'createdAt'] as const),
+  )
+  messages: CoreMessage[];
 }
 
 export class CreateChatDto extends OmitType(BaseChatDto, [
   'id',
-  'startedAt',
   'userId',
 ] as const) {}
 
