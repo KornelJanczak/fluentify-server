@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TopicBasePrompt } from './topic-base.prompt';
 
 @Injectable()
-export class AnyTopicPrompt extends TopicBasePrompt {
+export class AnythingPrompt extends TopicBasePrompt {
   protected category = 'anything';
   protected topic: string;
   protected topics = [
