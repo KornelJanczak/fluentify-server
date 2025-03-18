@@ -8,8 +8,6 @@ import { RedisModule } from './shared/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { VocabularySetModule } from './modules/vocabulary-set/vocabulary-set.module';
 import { ChatModule } from './modules/chat/chat.module';
-import { ChatService } from './chat/chat/chat.service';
-import { ChatService } from './module/chat/chat.service';
 
 @Module({
   imports: [
@@ -24,6 +22,6 @@ import { ChatService } from './module/chat/chat.service';
     RedisModule,
     ChatModule,
   ],
-  providers: [AppService, ChatService],
+  providers: [AppService],
 })
 export class AppModule {}
