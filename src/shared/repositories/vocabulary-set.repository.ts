@@ -149,6 +149,18 @@ export class VocabularySetRepository {
       throw ServiceError.DatabaseError(error.message, error.stack);
     }
   }
+
+  public async findAllFlashCardsByVocabularySetId(
+    id: string,
+  ): Promise<FlashCard[]> {
+    try {
+      return await this.db.query.flashCards.findMany({
+        where: eq(flashCards.vocabularySetId, id),
+      });
+    } catch (error) {
+      throw ServiceError.DatabaseError(error.message, error.stack);
+    }
+  }
 }
 
 export default VocabularySetRepository;
