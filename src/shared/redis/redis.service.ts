@@ -18,10 +18,7 @@ export class RedisService {
         this.logger.log('Redis connection established');
       })
       .catch((error: Error) => {
-        throw ServiceError.RedisError({
-          message: error.message,
-          stack: error.stack,
-        });
+        throw ServiceError.RedisError(error.message, error.stack);
       });
   }
 
