@@ -3,7 +3,6 @@ export default () => ({
   databaseUrl: process.env.DATABASE_URL || '',
   sessionSecret: process.env.SESSION_SECRET || '',
   clientUrl: process.env.CLIENT_URL || '',
-  logLevel: process.env.LOG_LEVEL || '',
   openaiApiKey: process.env.OPENAI_API_KEY || '',
   bullBasePath: process.env.BULL_BASE_PATH || '',
   secrets: {
