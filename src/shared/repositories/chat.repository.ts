@@ -21,6 +21,8 @@ export class ChatRepository {
       userId,
     };
 
+    console.log('newChat', newChat);
+
     try {
       const [chat] = await this.db
         .insert(chats)
